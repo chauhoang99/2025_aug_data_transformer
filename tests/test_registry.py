@@ -1,6 +1,6 @@
-import pytest
-from registry import TransformerRegistry
 import pandas as pd
+
+from registry import TransformerRegistry
 
 
 def test_registry_initialization():

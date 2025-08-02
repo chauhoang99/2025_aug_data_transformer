@@ -1,0 +1,8 @@
+    [tool.ruff]
+    line-length = 88 # Matches Black's default line length
+    target-version = "py313" # Specify your target Python version
+
+    [tool.ruff.lint]
+    select = ["E", "F"] # Enable Pyflakes (F) and a subset of pycodestyle (E)
+    ignore = ["E501"] # Ignore specific rules, e.g., line too long if using a formatter like Black
+    extend-select = ["I"] # Extend default rules with others, e.g., isort (I)

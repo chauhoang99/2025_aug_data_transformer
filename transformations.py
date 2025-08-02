@@ -1,12 +1,13 @@
 # Here we can add as many transformation functions as we want
 
 import pandas as pd
+
 from registry import registry
 
 
 def validate_column(df: pd.DataFrame, column: str):
     if column not in df.columns:
-        raise ValueError("column is not in data")
+        raise KeyError("column is not in data")
 
 
 @registry.register("filter_rows")

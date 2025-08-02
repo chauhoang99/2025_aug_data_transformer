@@ -1,14 +1,14 @@
 # main.py
 
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-import pandas as pd
 import io
 import json
 
+import pandas as pd
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+
 from registry import registry
-import transformations  # Needed to register transformers
 
 app = FastAPI()
 
@@ -43,7 +43,7 @@ async def transform_data(
                 status_code=400, detail=f"Unknown transformer: {step['name']}")
         try:
             df = transformer(df, **step["params"])
-        except KeyError as e:
+        except KeyError:
             raise HTTPException(
                 status_code=400, detail=''
             )

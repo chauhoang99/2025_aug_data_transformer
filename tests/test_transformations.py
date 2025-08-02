@@ -1,11 +1,12 @@
-import pytest
 import pandas as pd
+import pytest
+
 from transformations import (
     filter_rows,
     rename_column,
+    titlecase_column,
+    trim_whitespace,
     uppercase_column,
-    title_case_column,
-    trim_whitespace
 )
 
 
@@ -37,8 +38,8 @@ def test_uppercase_column(sample_df):
     assert list(result['name']) == expected
 
 
-def test_title_case_column(sample_df):
-    result = title_case_column(sample_df, 'name')
+def test_titlecase_column(sample_df):
+    result = titlecase_column(sample_df, 'name')
     expected = ['John Doe', ' Jane Smith ', 'Alice Johnson']
     assert list(result['name']) == expected
 
@@ -54,7 +55,7 @@ def test_transformations_with_invalid_column(sample_df):
         filter_rows(sample_df, 'invalid_column', 'value')
 
     with pytest.raises(KeyError):
-        uppercase_column(sample_df, 'invalid_column')
+        uppercase_column(sample_df, 'column is not in data')
 
     with pytest.raises(KeyError):
-        trim_whitespace(sample_df, 'invalid_column')
+        trim_whitespace(sample_df, 'column is not in data')
