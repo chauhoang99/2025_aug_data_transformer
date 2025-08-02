@@ -4,8 +4,9 @@ import io
 import json
 
 import pandas as pd
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile, Security, Depends
 from fastapi.responses import JSONResponse
+from fastapi.security.api_key import APIKeyHeader
 
 # Needed to register transformers
 import transformations  # noqa: F401
@@ -35,9 +36,19 @@ app.add_exception_handler(InvalidPipelineJSON, invalid_pipeline_handler)
 app.add_exception_handler(UnknownTransformer, unknown_transformer_handler)
 app.add_exception_handler(InvalidPipelineParam, invalid_pipeline_param)
 
+API_KEY = "supersecretkey123"
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+
+async def authorize_api_key(api_key: str = Security(api_key_header)):
+    if api_key != API_KEY:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    return api_key
+
 
 @app.post("/transform/")
 async def transform_data(
+    api_key: str = Depends(authorize_api_key),
     file: UploadFile = File(...),
     pipeline: str = Form(...)
 ):
