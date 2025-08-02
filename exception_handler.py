@@ -8,6 +8,8 @@ from exceptions import (
     InvalidPipelineJSON,
     InvalidPipelineParam,
     UnknownTransformer,
+    EmptyPipeline,
+    PydanticValidationError
 )
 
 
@@ -46,7 +48,21 @@ async def unknown_transformer_handler(request: Request, exc: UnknownTransformer)
     )
 
 
-async def invalid_pipeline_param(request: Request, exc: InvalidPipelineParam):
+async def invalid_pipeline_param_handler(request: Request, exc: InvalidPipelineParam):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+
+async def empty_pipe_line_hanlder(request: Request, exc: EmptyPipeline):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+
+async def pydantic_validation_error_handler(request: Request, exc: PydanticValidationError):
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.detail}

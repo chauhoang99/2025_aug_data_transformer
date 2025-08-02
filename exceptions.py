@@ -26,3 +26,13 @@ class UnknownTransformer(HTTPException):
 class InvalidPipelineParam(HTTPException):
     def __init__(self):
         super().__init__(status_code=400, detail="Unknown pipeline param, please check again")
+
+
+class EmptyPipeline(HTTPException):
+    def __init__(self):
+        super().__init__(status_code=400, detail="Pipeline must not be empty")
+
+
+class PydanticValidationError(HTTPException):
+    def __init__(self, message: str):
+        super().__init__(status_code=400, detail=f"{message}")
