@@ -7,6 +7,8 @@ import pandas as pd
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
+# Needed to register transformers
+import transformations  # noqa: F401
 from exception_handler import (
     column_not_found_handler,
     http_exception_handler,
