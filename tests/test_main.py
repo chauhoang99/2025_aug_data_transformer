@@ -50,7 +50,7 @@ def test_transform_data_success(sample_csv):
 def test_transform_invalid_csv():
     # This string contains a non-ASCII character: 'é'
     # Encode it with Latin-1 (not UTF-8)
-    csv_text = "invalid,csv\ndata\José".encode('latin-1')
+    csv_text = "invalid,csv\nname José".encode('latin-1')
     invalid_csv = io.BytesIO(csv_text)
     pipeline = [{"name": "uppercase_column", "params": {"column": "name"}}]
 
@@ -81,3 +81,12 @@ def test_transform_unknown_transformer(sample_csv):
     response = client.post("/transform/", files=files, data=data)
     assert response.status_code == 400
     assert "Unknown transformer" in response.json()["detail"]
+
+
+def test_transform_pipeline_step_not_found(sample_csv):
+    pipeline = [ { "name": "filter_rows", "params": { "column": "status", "value": "active" }}, { "name": "rename_column", "params": { "old_name": "name", "new_name": "full_name" }}, { "name": "uppercase_column", "params": { "column": "full_name" }}]
+    files = {"file": ("test.csv", sample_csv, "text/csv")}
+    data = {"pipeline": json.dumps(pipeline)}
+    response = client.post("/transform/", files=files, data=data)
+    assert response.status_code == 400
+    assert "Unknown pipeline param, please check again" in response.json()["detail"]

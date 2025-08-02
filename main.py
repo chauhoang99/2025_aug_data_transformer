@@ -6,11 +6,24 @@ import json
 import pandas as pd
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
 
+from exception_handler import (
+    column_not_found_handler,
+    http_exception_handler,
+    invalid_csv_handler,
+    invalid_pipeline_handler,
+    unknown_transformer_handler,
+    invalid_pipeline_param
+)
+from exceptions import (
+    ColumnNotFound,
+    InvalidCSV,
+    InvalidPipelineJSON,
+    UnknownTransformer,
+    InvalidPipelineParam
+)
+import transformations
 from registry import registry
-from exception_handler import *
-from exceptions import *
 
 app = FastAPI()
 
@@ -19,11 +32,7 @@ app.add_exception_handler(ColumnNotFound, column_not_found_handler)
 app.add_exception_handler(InvalidCSV, invalid_csv_handler)
 app.add_exception_handler(InvalidPipelineJSON, invalid_pipeline_handler)
 app.add_exception_handler(UnknownTransformer, unknown_transformer_handler)
-
-
-class TransformationStep(BaseModel):
-    name: str
-    params: dict
+app.add_exception_handler(InvalidPipelineParam, invalid_pipeline_param)
 
 
 @app.post("/transform/")
@@ -48,7 +57,10 @@ async def transform_data(
         transformer = registry.get(step["name"])
         if not transformer:
             raise UnknownTransformer(step['name'])
-        df = transformer(df, **step["params"])
+        try:
+            df = transformer(df, **step["params"])
+        except TypeError:
+            raise InvalidPipelineParam()
 
     return JSONResponse(content=df.to_dict(orient="records"))
 

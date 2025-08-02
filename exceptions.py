@@ -19,3 +19,8 @@ class InvalidPipelineJSON(HTTPException):
 class UnknownTransformer(HTTPException):
     def __init__(self, transformer_name: str):
         super().__init__(status_code=400, detail=f"Unknown transformer: {transformer_name}")
+
+
+class InvalidPipelineParam(HTTPException):
+    def __init__(self):
+            super().__init__(status_code=400, detail=f"Unknown pipeline param, please check again")
