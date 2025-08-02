@@ -9,6 +9,10 @@ from transformations import (
     uppercase_column,
 )
 
+from exceptions import (
+    ColumnNotFound
+)
+
 
 @pytest.fixture
 def sample_df():
@@ -51,11 +55,11 @@ def test_trim_whitespace(sample_df):
 
 
 def test_transformations_with_invalid_column(sample_df):
-    with pytest.raises(KeyError):
+    with pytest.raises(ColumnNotFound):
         filter_rows(sample_df, 'invalid_column', 'value')
 
-    with pytest.raises(KeyError):
+    with pytest.raises(ColumnNotFound):
         uppercase_column(sample_df, 'column is not in data')
 
-    with pytest.raises(KeyError):
+    with pytest.raises(ColumnNotFound):
         trim_whitespace(sample_df, 'column is not in data')
