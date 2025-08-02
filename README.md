@@ -47,6 +47,7 @@ docker compose up -d
 ### Example:
 ```bash
 curl -X POST http://127.0.0.1:8000/transform/ \
+  -H "X-API-Key: supersecretkey123" \
   -F "file=@test.csv" \
   -F 'pipeline=[
     {"name": "filter_rows", "params": {"column": "status", "value": "active"}},
@@ -64,3 +65,4 @@ Returns a list of available transformation operations.
 
 For testing, the already repo includes a test.csv file. The endpoint also can accept any other csv file.
 
+#
