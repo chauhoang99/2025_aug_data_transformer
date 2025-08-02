@@ -2,9 +2,8 @@
 
 import pandas as pd
 
-from registry import registry
-
 from exceptions import ColumnNotFound
+from registry import registry
 
 
 def validate_column(df: pd.DataFrame, column: str):

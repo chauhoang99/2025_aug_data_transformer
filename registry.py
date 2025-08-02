@@ -13,7 +13,7 @@ class TransformerRegistry:
 
     def get(self, name):
         return self._registry.get(name)
-    
+
     def available_transformers(self):
         return self._registry
 

@@ -6,8 +6,8 @@ from exceptions import (
     ColumnNotFound,
     InvalidCSV,
     InvalidPipelineJSON,
+    InvalidPipelineParam,
     UnknownTransformer,
-    InvalidPipelineParam
 )
 
 
