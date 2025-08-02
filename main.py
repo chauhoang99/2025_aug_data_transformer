@@ -9,8 +9,16 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from registry import registry
+from exception_handler import *
+from exceptions import *
 
 app = FastAPI()
+
+app.add_exception_handler(HTTPException, http_exception_handler)
+app.add_exception_handler(ColumnNotFound, column_not_found_handler)
+app.add_exception_handler(InvalidCSV, invalid_csv_handler)
+app.add_exception_handler(InvalidPipelineJSON, invalid_pipeline_handler)
+app.add_exception_handler(UnknownTransformer, unknown_transformer_handler)
 
 
 class TransformationStep(BaseModel):
@@ -27,26 +35,20 @@ async def transform_data(
         contents = await file.read()
         df = pd.read_csv(io.StringIO(contents.decode("utf-8")))
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid CSV")
+        raise InvalidCSV()
 
     try:
         steps = json.loads(pipeline)
     except json.JSONDecodeError:
-        raise HTTPException(status_code=400, detail="Invalid pipeline JSON")
+        raise InvalidPipelineJSON()
 
     # We can automatically plug the required transformer in
     # Or we also can hard-code which one to use here.
     for step in steps:
         transformer = registry.get(step["name"])
         if not transformer:
-            raise HTTPException(
-                status_code=400, detail=f"Unknown transformer: {step['name']}")
-        try:
-            df = transformer(df, **step["params"])
-        except KeyError:
-            raise HTTPException(
-                status_code=400, detail=''
-            )
+            raise UnknownTransformer(step['name'])
+        df = transformer(df, **step["params"])
 
     return JSONResponse(content=df.to_dict(orient="records"))
 
