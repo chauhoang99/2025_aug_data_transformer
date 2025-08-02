@@ -1,6 +1,5 @@
 # Introduction
-
-- Flexible transformation pipeline
+A Flexible transformation pipeline that is:
 - Pluggable transformation steps
 - Support for multiple data operations:
   - Filter rows based on column values
